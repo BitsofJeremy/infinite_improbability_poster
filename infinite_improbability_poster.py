@@ -1,11 +1,12 @@
 import tkinter as tk
-from tkinter import ttk, filedialog, messagebox
-import json
+from tkinter import ttk, messagebox
 import os
 import random
 from dotenv import load_dotenv
 import twit_it
 import cast_it
+import sky_it
+import toot_it
 
 load_dotenv()
 
@@ -43,13 +44,12 @@ class InfiniteImprobabilityPoster:
         self.platforms_frame.pack(pady=10)
         self.twitter_var = tk.BooleanVar()
         self.warpcast_var = tk.BooleanVar()
+        self.bluesky_var = tk.BooleanVar()
+        self.mastodon_var = tk.BooleanVar()
         ttk.Checkbutton(self.platforms_frame, text="Twitter", variable=self.twitter_var, style='TCheckbutton').pack(side=tk.LEFT)
         ttk.Checkbutton(self.platforms_frame, text="Warpcast", variable=self.warpcast_var, style='TCheckbutton').pack(side=tk.LEFT)
-
-        self.image_button = ttk.Button(self.master, text="Add Image", command=self.select_image)
-        self.image_button.pack(pady=5)
-        self.image_label = ttk.Label(self.master, text="No image selected")
-        self.image_label.pack()
+        ttk.Checkbutton(self.platforms_frame, text="Bluesky", variable=self.bluesky_var, style='TCheckbutton').pack(side=tk.LEFT)
+        ttk.Checkbutton(self.platforms_frame, text="Mastodon", variable=self.mastodon_var, style='TCheckbutton').pack(side=tk.LEFT)
 
         self.post_button = ttk.Button(self.master, text="Post", command=self.post_message)
         self.post_button.pack(pady=10)
@@ -80,23 +80,45 @@ class InfiniteImprobabilityPoster:
         count = len(self.message_input.get("1.0", 'end-1c'))
         self.char_count.config(text=f"{count}/280")
 
-    def select_image(self):
-        self.image_path = filedialog.askopenfilename(filetypes=[("Image files", "*.png *.jpg *.jpeg *.gif")])
-        if self.image_path:
-            self.image_label.config(text=os.path.basename(self.image_path))
-        else:
-            self.image_label.config(text="No image selected")
-
     def post_message(self):
         message = self.message_input.get("1.0", 'end-1c')
         if not message:
             messagebox.showerror("Error", "Please enter a message to post.")
             return
 
+        success = True
+        platforms_posted = []
+
         if self.twitter_var.get():
-            self.post_to_twitter(message)
+            if self.post_to_twitter(message):
+                platforms_posted.append("Twitter")
+            else:
+                success = False
+
         if self.warpcast_var.get():
-            self.post_to_warpcast(message)
+            if self.post_to_warpcast(message):
+                platforms_posted.append("Warpcast")
+            else:
+                success = False
+
+        if self.bluesky_var.get():
+            if self.post_to_bluesky(message):
+                platforms_posted.append("Bluesky")
+            else:
+                success = False
+
+        if self.mastodon_var.get():
+            if self.post_to_mastodon(message):
+                platforms_posted.append("Mastodon")
+            else:
+                success = False
+
+        if success:
+            platforms_str = ", ".join(platforms_posted)
+            messagebox.showinfo("Success", f"Post sent successfully to {platforms_str}!")
+            self.reset_ui()
+        else:
+            messagebox.showerror("Error", "Failed to post to one or more platforms. Check the status output for details.")
 
     def post_to_twitter(self, message):
         print("Attempting to post to Twitter...")
@@ -104,11 +126,14 @@ class InfiniteImprobabilityPoster:
             success = twit_it.send_tweet(message)
             if success:
                 self.update_status("Posted to Twitter successfully!")
+                return True
             else:
                 self.update_status("Failed to post to Twitter.")
+                return False
         except Exception as e:
             print(f"Error posting to Twitter: {str(e)}")
             self.update_status(f"Error posting to Twitter: {str(e)}")
+            return False
 
     def post_to_warpcast(self, message):
         print("Attempting to post to Warpcast...")
@@ -116,17 +141,61 @@ class InfiniteImprobabilityPoster:
             success = cast_it.send_cast(status=message)
             if success:
                 self.update_status("Posted to Warpcast successfully!")
+                return True
             else:
                 self.update_status("Failed to post to Warpcast.")
+                return False
         except Exception as e:
             print(f"Error posting to Warpcast: {str(e)}")
             self.update_status(f"Error posting to Warpcast: {str(e)}")
+            return False
+
+    def post_to_bluesky(self, message):
+        print("Attempting to post to Bluesky...")
+        try:
+            success = sky_it.send_post_to_sky(message)
+            if success:
+                self.update_status("Posted to Bluesky successfully!")
+                return True
+            else:
+                self.update_status("Failed to post to Bluesky.")
+                return False
+        except Exception as e:
+            print(f"Error posting to Bluesky: {str(e)}")
+            self.update_status(f"Error posting to Bluesky: {str(e)}")
+            return False
+
+    def post_to_mastodon(self, message):
+        print("Attempting to post to Mastodon...")
+        try:
+            success = toot_it.send_toot(message)
+            if success:
+                self.update_status("Posted to Mastodon successfully!")
+                return True
+            else:
+                self.update_status("Failed to post to Mastodon.")
+                return False
+        except Exception as e:
+            print(f"Error posting to Mastodon: {str(e)}")
+            self.update_status(f"Error posting to Mastodon: {str(e)}")
+            return False
 
     def update_status(self, message):
         self.status_output.config(state='normal')
         self.status_output.insert(tk.END, message + "\n")
         self.status_output.config(state='disabled')
         self.status_output.see(tk.END)
+
+    def reset_ui(self):
+        self.message_input.delete('1.0', tk.END)
+        self.char_count.config(text="0/280")
+        self.twitter_var.set(False)
+        self.warpcast_var.set(False)
+        self.bluesky_var.set(False)
+        self.mastodon_var.set(False)
+        self.status_output.config(state='normal')
+        self.status_output.delete('1.0', tk.END)
+        self.status_output.config(state='disabled')
 
 if __name__ == "__main__":
     root = tk.Tk()

@@ -45,11 +45,11 @@ class InfiniteImprobabilityPoster:
         self.twitter_var = tk.BooleanVar()
         self.warpcast_var = tk.BooleanVar()
         self.bluesky_var = tk.BooleanVar()
-        self.mastodon_var = tk.BooleanVar()
+        #self.mastodon_var = tk.BooleanVar()
         ttk.Checkbutton(self.platforms_frame, text="Twitter", variable=self.twitter_var, style='TCheckbutton').pack(side=tk.LEFT)
         ttk.Checkbutton(self.platforms_frame, text="Warpcast", variable=self.warpcast_var, style='TCheckbutton').pack(side=tk.LEFT)
         ttk.Checkbutton(self.platforms_frame, text="Bluesky", variable=self.bluesky_var, style='TCheckbutton').pack(side=tk.LEFT)
-        ttk.Checkbutton(self.platforms_frame, text="Mastodon", variable=self.mastodon_var, style='TCheckbutton').pack(side=tk.LEFT)
+        #ttk.Checkbutton(self.platforms_frame, text="Mastodon", variable=self.mastodon_var, style='TCheckbutton').pack(side=tk.LEFT)
 
         self.post_button = ttk.Button(self.master, text="Post", command=self.post_message)
         self.post_button.pack(pady=10)
@@ -107,11 +107,11 @@ class InfiniteImprobabilityPoster:
             else:
                 success = False
 
-        if self.mastodon_var.get():
-            if self.post_to_mastodon(message):
-                platforms_posted.append("Mastodon")
-            else:
-                success = False
+        # if self.mastodon_var.get():
+        #     if self.post_to_mastodon(message):
+        #         platforms_posted.append("Mastodon")
+        #     else:
+        #         success = False
 
         if success:
             platforms_str = ", ".join(platforms_posted)
@@ -165,20 +165,20 @@ class InfiniteImprobabilityPoster:
             self.update_status(f"Error posting to Bluesky: {str(e)}")
             return False
 
-    def post_to_mastodon(self, message):
-        print("Attempting to post to Mastodon...")
-        try:
-            success = toot_it.send_toot(message)
-            if success:
-                self.update_status("Posted to Mastodon successfully!")
-                return True
-            else:
-                self.update_status("Failed to post to Mastodon.")
-                return False
-        except Exception as e:
-            print(f"Error posting to Mastodon: {str(e)}")
-            self.update_status(f"Error posting to Mastodon: {str(e)}")
-            return False
+    # def post_to_mastodon(self, message):
+    #     print("Attempting to post to Mastodon...")
+    #     try:
+    #         success = toot_it.send_toot(message)
+    #         if success:
+    #             self.update_status("Posted to Mastodon successfully!")
+    #             return True
+    #         else:
+    #             self.update_status("Failed to post to Mastodon.")
+    #             return False
+    #     except Exception as e:
+    #         print(f"Error posting to Mastodon: {str(e)}")
+    #         self.update_status(f"Error posting to Mastodon: {str(e)}")
+    #         return False
 
     def update_status(self, message):
         self.status_output.config(state='normal')
@@ -192,7 +192,7 @@ class InfiniteImprobabilityPoster:
         self.twitter_var.set(False)
         self.warpcast_var.set(False)
         self.bluesky_var.set(False)
-        self.mastodon_var.set(False)
+        # self.mastodon_var.set(False)
         self.status_output.config(state='normal')
         self.status_output.delete('1.0', tk.END)
         self.status_output.config(state='disabled')

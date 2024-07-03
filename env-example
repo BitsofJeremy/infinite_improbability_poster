@@ -1,0 +1,22 @@
+# Twitter
+# Your App Oauth keys
+# https://developer.twitter.com/
+CONSUMER_KEY='YOUR_API_KEY'
+CONSUMER_SECRET='YOUR_API_KEY_SECRET'
+OAUTH_TOKEN='YOUR_ACCESS_TOKEN'
+OAUTH_TOKEN_SECRET='YOUR_ACCESS_TOKEN_SECRET'
+
+# Mastodon
+# Settings > Development > Your App > "Your access token"
+# https://YOUR_INSTANCE/settings/applications
+ACCESS_TOKEN=YOUR_SUPER_SECRET_KEYS
+MASTODON_INSTANCE='MASTODON_INSTANCE_TO_POST_TO'
+
+# Warpcast Mnemonic phrase [12-24 words]
+MNEMONIC_ENV_VAR="hotdog potato etc etc"
+WARPCAST_CHANNEL=farcaster
+
+# Bluesky
+# Username is the email registered
+BLUESKY_USERNAME="user@example.com"
+BLUESKY_PASSWORD="YOUR_SUPER_SECRET_PASSWORD"

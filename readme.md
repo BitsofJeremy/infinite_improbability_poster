@@ -2,7 +2,7 @@
 
 Infinite Improbability Poster is a Python-based desktop application that allows you to post messages to Twitter and Warpcast simultaneously. Inspired by Douglas Adams' "The Hitchhiker's Guide to the Galaxy", this app brings a touch of sci-fi whimsy to your social media posting experience.
 
-![Infinite Improbability Poster Screenshot](screenshot.png)
+![Infinite Improbability Poster Screenshot](screenshot01.png)
 
 ## Features
 

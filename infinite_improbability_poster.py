@@ -6,15 +6,16 @@ from dotenv import load_dotenv
 import twit_it
 import cast_it
 import sky_it
-import toot_it
+# import toot_it
 
 load_dotenv()
+
 
 class InfiniteImprobabilityPoster:
     def __init__(self, master):
         self.master = master
         master.title("Infinite Improbability Poster")
-        master.geometry("600x500")
+        master.geometry("600x700")
         self.set_theme()
         self.create_widgets()
 
